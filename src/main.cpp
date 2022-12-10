@@ -4,11 +4,12 @@
 #include "SD.h"
 #include "SPI.h"
 #include "FileOperations.h"
+#include "ArduinoJson-v6.19.4.h"
 
 
 void setup(){
     Serial.begin(115200);
-    Serial.println("Kakademona");
+    Serial.println("-== Kakademona ==-");
     if(!SD.begin()){
         Serial.println("Card Mount Failed");
         return;
@@ -48,6 +49,21 @@ void setup(){
     testFileIO(SD, "/test.txt");
     Serial.printf("Total space: %lluMB\n", SD.totalBytes() / (1024 * 1024));
     Serial.printf("Used space: %lluMB\n", SD.usedBytes() / (1024 * 1024));
+
+    DynamicJsonDocument doc(1024);
+
+    doc["sensor"] = "gps";
+    doc["time"]   = 1351824120;
+    doc["data"][0] = 48.756080;
+    doc["data"][1] = 2.302038;
+    
+    serializeJson(doc, Serial);
+    String data;
+    deserializeJson(doc, data);
+
+    writeFile(SD, "/sensoData.txt",);
+
+
 }
 
 void loop(){
