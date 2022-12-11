@@ -9,7 +9,6 @@
 
 void setup(){
     Serial.begin(115200);
-    Serial.println("-== Kakademona ==-");
     if(!SD.begin()){
         Serial.println("Card Mount Failed");
         return;
@@ -35,6 +34,7 @@ void setup(){
     uint64_t cardSize = SD.cardSize() / (1024 * 1024);
     Serial.printf("SD Card Size: %lluMB\n", cardSize);
 
+    // -== EXAMPLE USES ==-
     // listDir(SD, "/", 0);
     // createDir(SD, "/mydir");
     // listDir(SD, "/", 0);
@@ -60,16 +60,11 @@ void setup(){
     String data;
     serializeJson(doc, data);
 
-    writeFile(SD, "/sensoData.txt", data.c_str());
+    writeFile(SD, "/sensorData.txt", data.c_str());
 
-    readFile(SD, "/sensoData.txt");
-    dummyMethod();
+    readFile(SD, "/sensorData.txt");
 }
 
 void loop(){
-
-}
-
-void dummyMethod(){
 
 }
