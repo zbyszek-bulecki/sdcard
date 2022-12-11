@@ -60,9 +60,15 @@ void setup(){
     String data;
     serializeJson(doc, data);
 
-    writeFile(SD, "/sensorData.txt", data.c_str());
+    if(SD.exists("/logs/sensorData.txt")){
+        appendFile(SD, "/logs/sensorData.txt", data.c_str());
+    } else {
+        createDir(SD, "/logs");
+        writeFile(SD, "/logs/sensorData.txt", data.c_str());
+        Serial.println("Logs folder created.");
+    }
 
-    readFile(SD, "/sensorData.txt");
+    readFile(SD, "/logs/sensorData.txt");
 }
 
 void loop(){
