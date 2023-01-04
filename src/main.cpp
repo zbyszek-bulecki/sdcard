@@ -2,75 +2,63 @@
 
 #include "FS.h"
 #include "SD.h"
-#include "SPI.h"
 #include "FileOperations.h"
-#include "ArduinoJson-v6.19.4.h"
+#include <iostream>
+#include <fstream>
+#include <string>
 
+const char *WIFI_CONFIG_PATH = "/config/wifi.txt";
 
-void setup(){
+void setup()
+{
     Serial.begin(115200);
-    if(!SD.begin()){
+
+    if (!SD.begin())
+    {
         Serial.println("Card Mount Failed");
         return;
     }
-    uint8_t cardType = SD.cardType();
 
-    if(cardType == CARD_NONE){
-        Serial.println("No SD card attached");
-        return;
+        if (!SD.exists(WIFI_CONFIG_PATH))
+    {
+        char wifiConfig[] = "ssid=password";
+        createDir(SD, "/config");
+        writeFile(SD, WIFI_CONFIG_PATH, wifiConfig);
+        Serial.println("Blank WiFi config data created.");
     }
+    else
+    {
+        File myfile = SD.open(WIFI_CONFIG_PATH);
+        std::string wifiConfig;
+        if(myfile){
+            while(myfile.available()){
+               wifiConfig += (myfile.read());
+            }
+            myfile.close();
+        }
+        else
+        {
+            Serial.println("Error opening WiFi config file.");
+        }
+        Serial.println(wifiConfig.c_str());
+        char *p;
+        p = strchr(wifiConfig.c_str(), '=');
+        std::string wifiPassword;
+        wifiPassword.append(p+1);
+        Serial.println(wifiPassword.c_str());
 
-    Serial.print("SD Card Type: ");
-    if(cardType == CARD_MMC){
-        Serial.println("MMC");
-    } else if(cardType == CARD_SD){
-        Serial.println("SDSC");
-    } else if(cardType == CARD_SDHC){
-        Serial.println("SDHC");
-    } else {
-        Serial.println("UNKNOWN");
+        int b;
+        std::string ssid;
+        b = (wifiConfig.length() - wifiPassword.length() - 1);
+        for(int i = 0; i < b; i++){
+            ssid += wifiConfig[i];
+        }
+
+        Serial.println(ssid.c_str());
     }
-
-    uint64_t cardSize = SD.cardSize() / (1024 * 1024);
-    Serial.printf("SD Card Size: %lluMB\n", cardSize);
-
-    // -== EXAMPLE USES ==-
-    // listDir(SD, "/", 0);
-    // createDir(SD, "/mydir");
-    // listDir(SD, "/", 0);
-    // removeDir(SD, "/mydir");
-    // listDir(SD, "/", 2);
-    // writeFile(SD, "/hello.txt", "Hello ");
-    // appendFile(SD, "/hello.txt", "World!\n");
-    // readFile(SD, "/hello.txt");
-    // deleteFile(SD, "/foo.txt");
-    // renameFile(SD, "/hello.txt", "/foo.txt");
-    // readFile(SD, "/foo.txt");
-    // testFileIO(SD, "/test.txt");
-    // Serial.printf("Total space: %lluMB\n", SD.totalBytes() / (1024 * 1024));
-    // Serial.printf("Used space: %lluMB\n", SD.usedBytes() / (1024 * 1024));
-
-    DynamicJsonDocument doc(1024);
-
-    doc["sensor"] = "gps";
-    doc["time"]   = 1351824120;
-    doc["data"][0] = 48.756080;
-    doc["data"][1] = 2.302038;
-    
-    String data;
-    serializeJson(doc, data);
-
-    if(SD.exists("/logs/sensorData.txt")){
-        appendFile(SD, "/logs/sensorData.txt", data.c_str());
-    } else {
-        createDir(SD, "/logs");
-        writeFile(SD, "/logs/sensorData.txt", data.c_str());
-        Serial.println("Logs folder created.");
-    }
-
-    readFile(SD, "/logs/sensorData.txt");
 }
 
-void loop(){
+void loop()
+{
 
 }
