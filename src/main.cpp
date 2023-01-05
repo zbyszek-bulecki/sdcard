@@ -100,3 +100,9 @@ void setup()
 void loop()
 {
 }
+
+//TODO merge with sdcard branch code to include logging
+//TODO extract string treatment to functions in a separate library
+//TODO connect sensors
+//TODO write sensor data on SD card
+//TODO get Oracle Cloud and deploy to production
