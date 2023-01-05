@@ -23,28 +23,28 @@ void setup()
         return;
     }
 
-    // DynamicJsonDocument doc(1024);
+    DynamicJsonDocument doc(1024);
 
-    // doc["sensor"] = "gps";
-    // doc["time"] = 1351824120;
-    // doc["data"][0] = 48.756080;
-    // doc["data"][1] = 2.302038;
+    doc["sensor"] = "gps";
+    doc["time"] = 1351824120;
+    doc["data"][0] = 48.756080;
+    doc["data"][1] = 2.302038;
 
-    // String data;
-    // serializeJson(doc, data);
+    String data;
+    serializeJson(doc, data);
 
-    // if (SD.exists("/logs/sensorData.txt"))
-    // {
-    //     appendFile(SD, "/logs/sensorData.txt", data.c_str());
-    // }
-    // else
-    // {
-    //     createDir(SD, "/logs");
-    //     writeFile(SD, "/logs/sensorData.txt", data.c_str());
-    //     Serial.println("Logs folder created.");
-    // }
+    if (SD.exists("/logs/sensorData.txt"))
+    {
+        appendFile(SD, "/logs/sensorData.txt", data.c_str());
+    }
+    else
+    {
+        createDir(SD, "/logs");
+        writeFile(SD, "/logs/sensorData.txt", data.c_str());
+        Serial.println("Logs folder created.");
+    }
 
-    // readFile(SD, "/logs/sensorData.txt");
+    readFile(SD, "/logs/sensorData.txt");
 
     if (!SD.exists(WIFI_CONFIG_PATH))
     {
